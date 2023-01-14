@@ -20,7 +20,7 @@ outputs:
     description: "yes/no string indicating whether step is relevant or not"
     value: ${{ steps.relevant.outputs.result }}
   relevant-files:
-    description: "list of relevant files"
+    description: "comma separated list of relevant files"
     value: ${{ relevant-files }}
 runs:
   using: "composite"
