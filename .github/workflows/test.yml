@@ -1,5 +1,5 @@
 name: Automated tests
-on: [pull_request, workflow_run]
+on: [pull_request, workflow_dispatch]
 jobs:
   includes-excludes-is-relevant-yes:
     runs-on: ubuntu-latest
