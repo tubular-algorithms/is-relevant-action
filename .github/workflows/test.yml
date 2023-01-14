@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Check relevance
         id: is-relevant
-        uses: action.yml
+        uses: ./
         with:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           includes: |
@@ -28,13 +28,13 @@ jobs:
         uses: actions/checkout@v3
       - name: Check relevance
         id: is-relevant
-        uses: action.yml
+        uses: ./
         with:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           includes: |
             zzz/**
 
-  excludes-relevant-yes:
+  excludes-is-relevant-yes:
     runs-on: ubuntu-latest
     outputs:
       relevant: "${{ steps.is-relevant.outputs.relevant }}"
@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Check relevance
         id: is-relevant
-        uses: action.yml
+        uses: ./
         with:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           excludes: |
@@ -55,13 +55,10 @@ jobs:
       [
         includes-excludes-is-relevant-yes,
         includes-is-relevant-yes,
-        excludes-relevant-yes,
+        excludes-is-relevant-yes,
       ]
     steps:
       - run: |
-          echo 'includes & excludes is relevant yes:'
-          echo ${{ needs.includes-excludes-is-relevant-yes.relevant }}
-          echo 'includes is relevant yes:'
-          echo ${{ needs.includes-is-relevant-yes.relevant }}
-          echo 'excludes is relevant yes:'
-          echo ${{ needs.excludes-is-relevant-yes.relevant }}
+          echo 'using includes & excludes, expected is relevant yes: ${{ needs.includes-excludes-is-relevant-yes.outputs.relevant }}'
+          echo 'only using includes, expected is relevant yes: ${{ needs.includes-is-relevant-yes.outputs.relevant }}'
+          echo 'only using excludes, expected is relevant yes: ${{ needs.excludes-is-relevant-yes.outputs.relevant }}'

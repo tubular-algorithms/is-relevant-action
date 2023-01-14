@@ -51,7 +51,9 @@ runs:
         excludesRegexList = list(excludesRegexArr)
 
         def includesFilter(filename):
-          print("includesFilter - " + filename)
+          if len(includesRegexList) == 0:
+            return True;
+
           for includeRegex in includesRegexList:
             if re.match(r"^" + includeRegex + "$", filename):
               return True
@@ -66,7 +68,8 @@ runs:
           return True
 
         # Throw away filenames that don't match one of the include patterns
-        filenamesArr = filter(includesFilter, filenamesArr)
+        filenamesArr = list(filter(includesFilter, filenamesArr))
+
         # Throw away filenames that match any exclude pattern
         filenamesArr = filter(excludesFilter, filenamesArr)
 
