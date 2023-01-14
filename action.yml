@@ -21,7 +21,7 @@ outputs:
     value: ${{ steps.relevant.outputs.result }}
   relevant-files:
     description: "comma separated list of relevant files"
-    value: ${{ relevant-files }}
+    value: ${{ steps.relevant.outputs.relevant-files }}
 runs:
   using: "composite"
   steps:
