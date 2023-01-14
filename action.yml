@@ -1,0 +1,101 @@
+name: Is the list of filenames relevant?
+description: A GitHub action that takes a list of files and decides if they are relevant
+inputs:
+  filenames:
+    description: "A comma separated list of filenames"
+    type: string
+    required: true
+  includes:
+    description: "A multi-line list of globs that are relevant"
+    type: string
+    required: false
+    default: ""
+  excludes:
+    description: "A multi-line list of globs that are to be ignored as they are not relevant"
+    type: string
+    required: false
+    default: ""
+outputs:
+  relevant:
+    description: "yes/no string indicating whether step is relevant or not"
+    value: ${{ steps.relevant.outputs.result }}
+  relevant-files:
+    description: "list of relevant files"
+    value: ${{ relevant-files }}
+runs:
+  using: "composite"
+  steps:
+    - name: Filter filenames by includes and excludes
+      id: relevant
+      shell: python
+      run: |
+        import os
+        import fnmatch
+        import re
+
+        filenamesInput = "${{ inputs.filenames }}" or "${{ github.event.inputs.filenames }}"
+        includesInput = '''${{ inputs.includes }}''' or '''${{ github.event.inputs.includes }}'''
+        excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
+
+        filenamesArr = ([], filenamesInput.split(","))[len(filenamesInput) > 0]
+        includesArr = ([], includesInput.splitlines())[len(includesInput) > 0]
+        excludesArr = ([], excludesInput.splitlines())[len(excludesInput) > 0]
+
+        includesRegexArr = map(str.strip, includesArr)
+        excludesRegexArr = map(str.strip, excludesArr)
+
+        includesRegexArr = map(fnmatch.translate, includesArr)
+        excludesRegexArr = map(fnmatch.translate, excludesArr)
+
+        includesRegexList = list(includesRegexArr)
+        excludesRegexList = list(excludesRegexArr)
+
+        def includesFilter(filename):
+          print("includesFilter - " + filename)
+          for includeRegex in includesRegexList:
+            if re.match(r"^" + includeRegex + "$", filename):
+              return True
+
+          return False
+
+        def excludesFilter(filename):
+          for excludeRegex in excludesRegexList:
+            if re.match(r"^" + excludeRegex + "$", filename):
+              return False
+
+          return True
+
+        # Throw away filenames that don't match one of the include patterns
+        filenamesArr = filter(includesFilter, filenamesArr)
+        # Throw away filenames that match any exclude pattern
+        filenamesArr = filter(excludesFilter, filenamesArr)
+
+        resultsList = list(filenamesArr)
+
+        print('filenamesInput')
+        print(filenamesInput)
+
+        print('includesRegexList')
+        print(includesRegexList)
+
+        print('excludesRegexList')
+        print(excludesRegexList)
+
+        result = ('no', 'yes')[len(resultsList) > 0]
+        resultListStr = ",".join(resultsList)
+
+        print('Is relevant? ' + result)
+        print('Relevant files: ' + resultListStr)
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+          print(f'result={result}', file=fh)
+
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+          print(f'relevant-files={resultListStr}', file=fh)
+
+        file = open(os.environ['GITHUB_OUTPUT'], "r");
+
+        print("GITHUB_OUTPUT:");
+        print(file.read());
+
+        file.close();
