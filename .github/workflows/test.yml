@@ -24,7 +24,7 @@ jobs:
           echo "::error::Not expected result"
       - name: Validate relevant-files output
         run: |
-          output_sorted=$(echo '{{ steps.is-relevant.outputs.relevant-files }}' | jq 'sort_by(.)')
+          output_sorted=$(echo '${{ steps.is-relevant.outputs.relevant-files }}' | jq 'sort_by(.)')
           expected_sorted=$(echo '[]' | jq 'sort_by(.)')
 
           if [ $output_sorted == $expected_sorted ]
