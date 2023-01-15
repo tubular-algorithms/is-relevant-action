@@ -20,6 +20,7 @@ runs:
   using: "composite"
   steps:
     - name: Validate relevant output
+      shell: "bash"
       run: |
         actual="${{ inputs.relevant-actual }}"
         expected="${{ inputs.relevant-expected }}"
@@ -29,6 +30,7 @@ runs:
           exit 1
         fi
     - name: Validate relevant-files output
+      shell: "bash"
       run: |
         actual_sorted=$(echo '"${{ inputs.relevant-files-actual }}"' | jq 'split(",") | sort_by(.) | join(",")')
         expected_sorted=$(echo '"${{ inputs.relevant-files-expected }}"' | jq 'split(",") | sort_by(.) | join(",")')
