@@ -18,6 +18,13 @@ jobs:
             **/*.foo
           excludes: |
             zzz/**
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   includes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -33,6 +40,13 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           includes: |
             zzz/**
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "zzz/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   excludes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -48,6 +62,13 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           excludes: |
             zzz/**
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
     runs-on: ubuntu-latest
