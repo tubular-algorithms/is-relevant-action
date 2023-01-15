@@ -1,0 +1,40 @@
+name: Validates output from is-relevant tests
+inputs:
+  relevant-expected:
+    description: "Expected yes/no string"
+    type: string
+    required: true
+  relevant-actual:
+    description: "Actual yes/no string"
+    type: string
+    required: true
+  relevant-files-expected:
+    description: "Expected comma separated list of filenames"
+    type: string
+    required: true
+  relevant-files-actual:
+    description: "Actual comma separated list of filenames"
+    type: string
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Validate relevant output
+      run: |
+        actual="${{ inputs.relevant-actual }}"
+        expected="${{ inputs.relevant-expected }}"
+        if [ $actual != $expected ]
+        then
+          echo "::error::Not expected result, expected '${expected}', actual '${actual}'"
+          exit 1
+        fi
+    - name: Validate relevant-files output
+      run: |
+        actual_sorted=$(echo '"${{ inputs.relevant-files-actual }}"' | jq 'split(",") | sort_by(.) | join(",")')
+        expected_sorted=$(echo '"${{ inputs.relevant-files-expected }}"' | jq 'split(",") | sort_by(.) | join(",")')
+
+        if [ $actual_sorted != $expected_sorted ]
+        then
+          echo "::error::Not expected result, expected: ${expected_sorted}, actual ${actual_sorted}"
+          exit 1
+        fi

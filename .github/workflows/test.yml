@@ -18,23 +18,13 @@ jobs:
             **/*.foo
           excludes: |
             zzz/**
-      - name: Validate relevant output
-        run: |
-          if [ "${{ steps.is-relevant.outputs.relevant }}" != 'yes' ]
-          then
-            echo "::error::Not expected result, expected 'yes', actual '${{ steps.is-relevant.outputs.relevant }}'"
-            exit 1
-          fi
-      - name: Validate relevant-files output
-        run: |
-          output_sorted=$(echo '"${{ steps.is-relevant.outputs.relevant-files }}"' | jq 'split(",") | sort_by(.) | join(",")')
-          expected_sorted=$(echo '"[]"' | jq 'split(",") | sort_by(.) | join(",")')
-
-          if [ $output_sorted != $expected_sorted ]
-          then
-            echo "::error::Not expected result, expected: ${expected_sorted}, actual ${output_sorted}"
-            exit 1
-          fi
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   includes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -50,10 +40,13 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           includes: |
             zzz/**
-      - name: Validate response
-        if: steps.is-relevant.outputs.relevant != 'yes'
-        run: |
-          echo "::error::Not expected result"
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "zzz/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   excludes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -69,10 +62,13 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           excludes: |
             zzz/**
-      - name: Validate response
-        if: steps.is-relevant.outputs.relevant != 'yes'
-        run: |
-          echo "::error::Not expected result"
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "yes"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
     runs-on: ubuntu-latest
