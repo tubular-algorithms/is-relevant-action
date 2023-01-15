@@ -29,7 +29,7 @@ jobs:
 
           if [ $output_sorted != $expected_sorted ]
           then
-            echo "::error::Not expected result"
+            echo "::error::Not expected result, expected: ${expected_sorted}, actual ${output_sorted}"
           fi
 
   includes-is-relevant-yes:
