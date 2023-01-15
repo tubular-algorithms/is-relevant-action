@@ -18,6 +18,19 @@ jobs:
             **/*.foo
           excludes: |
             zzz/**
+      - name: Validate relevant output
+        if: steps.is-relevant.outputs.relevant != 'yes'
+        run: |
+          echo "::error::Not expected result"
+      - name: Validate relevant-files output
+        run: |
+          output_sorted=$(echo '{{ steps.is-relevant.outputs.relevant-files }}' | jq 'sort_by(.)')
+          expected_sorted=$(echo '[]' | jq 'sort_by(.)')
+
+          if [ $output_sorted == $expected_sorted ]
+          then
+            echo "::error::Not expected result"
+          fi
 
   includes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -33,6 +46,10 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           includes: |
             zzz/**
+      - name: Validate response
+        if: steps.is-relevant.outputs.relevant != 'yes'
+        run: |
+          echo "::error::Not expected result"
 
   excludes-is-relevant-yes:
     runs-on: ubuntu-latest
@@ -48,6 +65,10 @@ jobs:
           filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
           excludes: |
             zzz/**
+      - name: Validate response
+        if: steps.is-relevant.outputs.relevant != 'yes'
+        run: |
+          echo "::error::Not expected result"
 
   output-is-relevant-results:
     runs-on: ubuntu-latest
