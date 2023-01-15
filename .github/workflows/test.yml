@@ -19,9 +19,12 @@ jobs:
           excludes: |
             zzz/**
       - name: Validate relevant output
-        if: steps.is-relevant.outputs.relevant != 'yes'
         run: |
-          echo "::error::Not expected result"
+          if [ "${{ steps.is-relevant.outputs.relevant }}" != 'yes' ]
+          then
+            echo "::error::Not expected result, expected 'yes', actual '${{ steps.is-relevant.outputs.relevant }}'"
+            exit 1
+          fi
       - name: Validate relevant-files output
         run: |
           output_sorted=$(echo '"${{ steps.is-relevant.outputs.relevant-files }}"' | jq 'split(",") | sort_by(.) | join(",")')
@@ -30,6 +33,7 @@ jobs:
           if [ $output_sorted != $expected_sorted ]
           then
             echo "::error::Not expected result, expected: ${expected_sorted}, actual ${output_sorted}"
+            exit 1
           fi
 
   includes-is-relevant-yes:
