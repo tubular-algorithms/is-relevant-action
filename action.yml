@@ -104,8 +104,8 @@ runs:
 
           for configItem in configArr:
             itemName = configItem['name']
-            itemIncludes = configItem['includes'] or ""
-            itemExcludes = configItem['excludes'] or ""
+            itemIncludes = configItem.get('includes', "")
+            itemExcludes = configItem.get('excludes', "")
             print(itemName + ": includes: '" + itemIncludes + " excludes: '" + itemExcludes + "'")
 
         with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
