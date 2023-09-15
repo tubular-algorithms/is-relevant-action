@@ -44,7 +44,7 @@ runs:
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
         configInput = '''${{ inputs.config }}''' or '''${{ github.event.inputs.config }}'''
 
-        def isRelevant(filenamesStr, includesStr, excludesStr)
+        def isRelevant(filenamesStr, includesStr, excludesStr):
           filenamesArr = ([], filenamesInput.split(","))[len(filenamesStr) > 0]
           includesArr = ([], includesInput.splitlines())[len(includesStr) > 0]
           excludesArr = ([], excludesInput.splitlines())[len(excludesStr) > 0]
