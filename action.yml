@@ -84,8 +84,8 @@ runs:
           resultsList = list(filenamesArr)
 
           print('filenamesInput: ' + filenamesInput)
-          print('includesRegexList: ' + includesRegexList)
-          print('excludesRegexList' + excludesRegexList)
+          print('includesRegexList: ' + ",".join(includesRegexList))
+          print('excludesRegexList: ' + ",".join(excludesRegexList))
 
           result = ('no', 'yes')[len(resultsList) > 0]
           resultListStr = ",".join(resultsList)
