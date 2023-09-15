@@ -94,7 +94,7 @@ jobs:
               },
               {
                 "name": "C",
-                includes: "zzzz/"
+                "includes": "zzzz/"
               }
             ]
       - name: Validate is-relevant output
