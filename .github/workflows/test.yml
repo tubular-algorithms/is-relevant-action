@@ -86,7 +86,7 @@ jobs:
             [
               {
                 "name": "A",
-                "includes": "aaa/",
+                "includes": "aaa/"
               },
               {
                 "name": "B",
