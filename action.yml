@@ -44,58 +44,63 @@ runs:
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
         configInput = '''${{ inputs.config }}''' or '''${{ github.event.inputs.config }}'''
 
-        filenamesArr = ([], filenamesInput.split(","))[len(filenamesInput) > 0]
-        includesArr = ([], includesInput.splitlines())[len(includesInput) > 0]
-        excludesArr = ([], excludesInput.splitlines())[len(excludesInput) > 0]
+        def isRelevant(filenamesStr, includesStr, excludesStr)
+          filenamesArr = ([], filenamesInput.split(","))[len(filenamesStr) > 0]
+          includesArr = ([], includesInput.splitlines())[len(includesStr) > 0]
+          excludesArr = ([], excludesInput.splitlines())[len(excludesStr) > 0]
 
-        includesRegexArr = map(str.strip, includesArr)
-        excludesRegexArr = map(str.strip, excludesArr)
+          includesRegexArr = map(str.strip, includesArr)
+          excludesRegexArr = map(str.strip, excludesArr)
 
-        includesRegexArr = map(fnmatch.translate, includesArr)
-        excludesRegexArr = map(fnmatch.translate, excludesArr)
+          includesRegexArr = map(fnmatch.translate, includesArr)
+          excludesRegexArr = map(fnmatch.translate, excludesArr)
 
-        includesRegexList = list(includesRegexArr)
-        excludesRegexList = list(excludesRegexArr)
+          includesRegexList = list(includesRegexArr)
+          excludesRegexList = list(excludesRegexArr)
 
-        def includesFilter(filename):
-          if len(includesRegexList) == 0:
-            return True;
+          def includesFilter(filename):
+            if len(includesRegexList) == 0:
+              return True;
 
-          for includeRegex in includesRegexList:
-            if re.match(r"^" + includeRegex + "$", filename):
-              return True
+            for includeRegex in includesRegexList:
+              if re.match(r"^" + includeRegex + "$", filename):
+                return True
 
-          return False
+            return False
 
-        def excludesFilter(filename):
-          for excludeRegex in excludesRegexList:
-            if re.match(r"^" + excludeRegex + "$", filename):
-              return False
+          def excludesFilter(filename):
+            for excludeRegex in excludesRegexList:
+              if re.match(r"^" + excludeRegex + "$", filename):
+                return False
 
-          return True
+            return True
 
-        # Throw away filenames that don't match one of the include patterns
-        filenamesArr = list(filter(includesFilter, filenamesArr))
+          # Throw away filenames that don't match one of the include patterns
+          filenamesArr = list(filter(includesFilter, filenamesArr))
 
-        # Throw away filenames that match any exclude pattern
-        filenamesArr = filter(excludesFilter, filenamesArr)
+          # Throw away filenames that match any exclude pattern
+          filenamesArr = filter(excludesFilter, filenamesArr)
 
-        resultsList = list(filenamesArr)
+          resultsList = list(filenamesArr)
 
-        print('filenamesInput')
-        print(filenamesInput)
+          print('filenamesInput')
+          print(filenamesInput)
 
-        print('includesRegexList')
-        print(includesRegexList)
+          print('includesRegexList')
+          print(includesRegexList)
 
-        print('excludesRegexList')
-        print(excludesRegexList)
+          print('excludesRegexList')
+          print(excludesRegexList)
 
-        result = ('no', 'yes')[len(resultsList) > 0]
-        resultListStr = ",".join(resultsList)
+          result = ('no', 'yes')[len(resultsList) > 0]
+          resultListStr = ",".join(resultsList)
 
-        print('Is relevant? ' + result)
-        print('Relevant files: ' + resultListStr)
+          print('Is relevant? ' + result)
+          print('Relevant files: ' + resultListStr)
+
+          return result, resultListStr
+
+        result, resultListStr = isRelevant(filenamesInput, includesInput, excludesInput)
 
         if len(configInput) > 0:
           print('Config detected: ' + configInput)
