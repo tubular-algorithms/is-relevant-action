@@ -45,9 +45,9 @@ runs:
         configInput = '''${{ inputs.config }}''' or '''${{ github.event.inputs.config }}'''
 
         def isRelevant(filenamesStr, includesStr, excludesStr):
-          filenamesArr = ([], filenamesInput.split(","))[len(filenamesStr) > 0]
-          includesArr = ([], includesInput.splitlines())[len(includesStr) > 0]
-          excludesArr = ([], excludesInput.splitlines())[len(excludesStr) > 0]
+          filenamesArr = ([], filenamesStr.split(","))[len(filenamesStr) > 0]
+          includesArr = ([], includesStr.splitlines())[len(includesStr) > 0]
+          excludesArr = ([], excludesStr.splitlines())[len(excludesStr) > 0]
 
           includesRegexArr = map(str.strip, includesArr)
           excludesRegexArr = map(str.strip, excludesArr)
@@ -83,14 +83,9 @@ runs:
 
           resultsList = list(filenamesArr)
 
-          print('filenamesInput')
-          print(filenamesInput)
-
-          print('includesRegexList')
-          print(includesRegexList)
-
-          print('excludesRegexList')
-          print(excludesRegexList)
+          print('filenamesInput: ' + filenamesInput)
+          print('includesRegexList: ' + includesRegexList)
+          print('excludesRegexList' + excludesRegexList)
 
           result = ('no', 'yes')[len(resultsList) > 0]
           resultListStr = ",".join(resultsList)
