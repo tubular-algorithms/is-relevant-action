@@ -103,7 +103,10 @@ runs:
           configArr = json.loads(configInput)
 
           for configItem in configArr:
-            print(configItem['includes'])
+            itemName = configItem['name']
+            itemIncludes = configItem['includes'] or ""
+            itemExcludes = configItem['excludes'] or ""
+            print(itemName + ": includes: '" + itemIncludes + " excludes: '" + itemExcludes + "'")
 
         with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
           print(f'result={result}', file=fh)
