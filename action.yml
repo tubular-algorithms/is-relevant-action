@@ -37,6 +37,7 @@ runs:
         import os
         import fnmatch
         import re
+        import json
 
         filenamesInput = "${{ inputs.filenames }}" or "${{ github.event.inputs.filenames }}"
         includesInput = '''${{ inputs.includes }}''' or '''${{ github.event.inputs.includes }}'''
@@ -98,6 +99,11 @@ runs:
 
         if len(configInput) > 0:
           print('Config detected: ' + configInput)
+
+          configArr = json.loads(configInput)
+
+          for configItem in configArr:
+            print(configItem['includes'])
 
         with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
           print(f'result={result}', file=fh)
