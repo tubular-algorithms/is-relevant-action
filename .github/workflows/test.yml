@@ -86,15 +86,15 @@ jobs:
             [
               {
                 "name": "A",
-                "includes": "aaa/"
+                "includes": "aaa/**"
               },
               {
                 "name": "B",
-                "includes": "bbb/"
+                "includes": "bbb/**"
               },
               {
                 "name": "C",
-                "includes": "zzzz/"
+                "includes": "zzzz/**"
               }
             ]
       - name: Validate is-relevant output
