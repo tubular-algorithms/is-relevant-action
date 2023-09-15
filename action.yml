@@ -96,8 +96,8 @@ runs:
         print('Is relevant? ' + result)
         print('Relevant files: ' + resultListStr)
 
-        if len(config) > 0:
-          print('Config detected: ' + config)
+        if len(configInput) > 0:
+          print('Config detected: ' + configInput)
 
         with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
           print(f'result={result}', file=fh)
