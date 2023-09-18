@@ -61,16 +61,24 @@ runs:
             if len(includesList) == 0:
               return True;
 
+            print(filename, "".join(includesList))
+
             for includeGlob in includesList:
               if PurePath(filename).match(includeGlob):
+                print("includes " + filename + ": " + ",".join(includesList) + " - true")
                 return True
+
+            print("includes " + filename + ": " + ",".join(includesList) + " - false")
 
             return False
 
           def excludesFilter(filename):
             for excludeGlob in excludesList:
               if PurePath(filename).match(excludeGlob):
+                print("excludes " + filename + ": " + ",".join(includesList) + " - true")
                 return False
+
+            print("excludes " + filename + ": " + ",".join(includesList) + " - false")
 
             return True
 
