@@ -14,7 +14,7 @@ jobs:
         with:
           filenames: "/aaa/bbb/ccc.txt,/aaa/xxx.foo,/zzz/xxx.foo"
           includes: |
-            **/aaa/**/*
+            **/aaa/**
             **/*.foo
           excludes: |
             /zzz/**
