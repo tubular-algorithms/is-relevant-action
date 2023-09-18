@@ -44,6 +44,10 @@ runs:
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
         configInput = '''${{ inputs.config }}''' or '''${{ github.event.inputs.config }}'''
 
+        def translateGlobToRegex(globPattern):
+          prefix = "^" if globPattern.startswith("/") else ""
+          return prefix + fnmatch.translate(globPattern) + "$"
+
         def isRelevant(filenamesStr, includesStr, excludesStr):
           filenamesArr = ([], filenamesStr.split(","))[len(filenamesStr) > 0]
           includesArr = ([], includesStr.splitlines())[len(includesStr) > 0]
@@ -55,8 +59,8 @@ runs:
           includesList = list(includesCleanArr)
           excludesList = list(excludesCleanArr)
 
-          includesRegexArr = map(fnmatch.translate, includesList)
-          excludesRegexArr = map(fnmatch.translate, excludesList)
+          includesRegexArr = map(translateGlobToRegex, includesList)
+          excludesRegexArr = map(translateGlobToRegex, excludesList)
 
           includesRegexList = list(includesRegexArr)
           excludesRegexList = list(excludesRegexArr)
@@ -70,7 +74,7 @@ runs:
             for includeRegex in includesRegexList:
               print("checking: '" + filename + "' against '" + includeRegex + "'")
 
-              if re.search(r"" + includeRegex + "$", filename):
+              if re.search(r"" + includeRegex, filename):
                 print("match found")
                 return True
               else:
@@ -89,7 +93,7 @@ runs:
             for excludeRegex in excludesRegexList:
               print("checking: '" + filename + "' against '" + excludeRegex + "'")
 
-              if re.search(r"" + excludeRegex + "$", filename):
+              if re.search(r"" + excludeRegex, filename):
                 print("match found")
                 return False
               else:
