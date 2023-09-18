@@ -39,8 +39,6 @@ runs:
         import re
         import json
 
-        from pathlib import PurePosixPath
-
         filenamesInput = "${{ inputs.filenames }}" or "${{ github.event.inputs.filenames }}"
         includesInput = '''${{ inputs.includes }}''' or '''${{ github.event.inputs.includes }}'''
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
@@ -62,6 +60,9 @@ runs:
 
           includesRegexList = list(includesRegexArr)
           excludesRegexList = list(excludesRegexArr)
+
+          print("---->" + ",".join(includesRegexList));
+          print("<----" + ",".join(excludesRegexList));
 
           def includesFilter(filename):
             if len(includesRegexList) == 0:
