@@ -30,9 +30,6 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Install pathspec
-      run: pip install pathspec
-      shell: cmd
     - name: Filter filenames by includes and excludes
       id: relevant
       shell: python
@@ -41,7 +38,6 @@ runs:
         import fnmatch
         import re
         import json
-        import pathspec
 
         from pathlib import PurePosixPath
 
@@ -61,16 +57,22 @@ runs:
           includesList = list(includesCleanArr)
           excludesList = list(excludesCleanArr)
 
+          includesRegexArr = map(fnmatch.translate, includesCleanArr)
+          excludesRegexArr = map(fnmatch.translate, excludesCleanArr)
+
+          includesRegexList = list(includesRegexArr)
+          excludesRegexList = list(excludesRegexArr)
+
           def includesFilter(filename):
-            if len(includesList) == 0:
+            if len(includesRegexList) == 0:
               return True;
 
             print("checking whether '" + filename + "' included in '" + ",".join(includesList) + "'")
 
-            for includeGlob in includesList:
-              print("checking: '" + filename + "' against '" + includeGlob + "'")
+            for includesRegex in includesRegexList:
+              print("checking: '" + filename + "' against '" + includesRegex + "'")
 
-              if PurePosixPath(filename).match(includeGlob):
+              if re.search(r"^" + includeRegex + "$", filename):
                 print("match found")
                 return True
               else:
@@ -81,15 +83,15 @@ runs:
             return False
 
           def excludesFilter(filename):
-            if len(excludesList) == 0:
+            if len(excludesRegexList) == 0:
               return True;
 
             print("checking whether '" + filename + "' excluded by '" + ",".join(excludesList) + "'")
 
-            for excludeGlob in excludesList:
-              print("checking: '" + filename + "' against '" + excludeGlob + "'")
+            for excludesRegex in excludesRegexList:
+              print("checking: '" + filename + "' against '" + excludesRegex + "'")
 
-              if PurePosixPath(filename).match(excludeGlob):
+              if re.search(r"^" + excludeRegex + "$", filename):
                 print("match found")
                 return False
               else:
