@@ -48,6 +48,28 @@ jobs:
           relevant-files-expected: "/zzz/xxx.foo"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
+  includes-is-relevant-no:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: "${{ steps.is-relevant.outputs.relevant }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check relevance
+        id: is-relevant
+        uses: ./
+        with:
+          filenames: "/aaa/bbb/ccc"
+          includes: |
+            /bbb/**
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "no"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: ""
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
+
   excludes-is-relevant-yes:
     runs-on: ubuntu-latest
     outputs:
