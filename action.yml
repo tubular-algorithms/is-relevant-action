@@ -30,6 +30,9 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Install pathspec
+      run: pip install pathspec
+      shell: cmd
     - name: Filter filenames by includes and excludes
       id: relevant
       shell: python
