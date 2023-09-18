@@ -64,9 +64,13 @@ runs:
             print(filename, "".join(includesList))
 
             for includeGlob in includesList:
+              print("checking: " + includeGlob)
+
               if PurePath(filename).match(includeGlob):
                 print("includes " + filename + ": " + ",".join(includesList) + " - true")
                 return True
+              else:
+                print(includeGlob + " no match")
 
             print("includes " + filename + ": " + ",".join(includesList) + " - false")
 
