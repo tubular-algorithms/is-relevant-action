@@ -70,7 +70,7 @@ runs:
             for includeRegex in includesRegexList:
               print("checking: '" + filename + "' against '" + includeRegex + "'")
 
-              if re.search(r"^" + includeRegex + "$", filename):
+              if re.search(r"" + includeRegex + "$", filename):
                 print("match found")
                 return True
               else:
@@ -89,7 +89,7 @@ runs:
             for excludeRegex in excludesRegexList:
               print("checking: '" + filename + "' against '" + excludeRegex + "'")
 
-              if re.search(r"^" + excludeRegex + "$", filename):
+              if re.search(r"" + excludeRegex + "$", filename):
                 print("match found")
                 return False
               else:
