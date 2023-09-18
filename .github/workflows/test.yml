@@ -81,24 +81,24 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           config: |
             [
               {
                 "name": "A",
-                "includes": "aaa/**"
+                "includes": "/aaa/**"
               },
               {
                 "name": "B",
-                "includes": "bbb/**"
+                "includes": "/bbb/**"
               },
               {
                 "name": "C",
-                "includes": "**/bbb/**"
+                "includes": "/**/bbb/**"
               },
               {
                 "name": "D",
-                "includes": "zzzz/**"
+                "includes": "/zzzz/**"
               }
             ]
       - name: Validate is-relevant output
