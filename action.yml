@@ -141,9 +141,9 @@ runs:
             itemIncludes = configItem.get('includes', "")
             itemExcludes = configItem.get('excludes', "")
             print(itemName + ": includes: '" + itemIncludes + "' excludes: '" + itemExcludes + "'")
-            result, resultListStr = isRelevant(resultListStr, itemIncludes, itemExcludes)
-            print(itemName + ": result: '" + result + "' files: '" + resultListStr + "'")
-            resultsList += [result]
+            res, resListStr = isRelevant(resultListStr, itemIncludes, itemExcludes)
+            print(itemName + ": result: '" + res + "' files: '" + resListStr + "'")
+            resList += [res]
           
           resultsListStr = ",".join(resultsList)
 
