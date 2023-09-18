@@ -34,7 +34,9 @@ runs:
       run: |
         is_array=$(echo '${{ inputs.relevant-files-actual }}' | jq 'if type=="array" then "yes" else "no" end')
 
-        if [ "$is_array" == "no" ]
+        echo "result is array? $is_array"
+
+        if [ "$is_array" = "no" ]
         then
           actual_sorted=$(echo '${{ inputs.relevant-files-actual }}' | jq 'split(",") | sort_by(.) | join(",")')
           expected_sorted=$(echo '${{ inputs.relevant-files-expected }}' | jq 'split(",") | sort_by(.) | join(",")')
