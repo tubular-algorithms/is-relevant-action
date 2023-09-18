@@ -72,17 +72,26 @@ runs:
               else:
                 print("no match")
 
-            print("'" + filename + "' not included in '" + ",".join(includesList) + "'")
+            print("'" + filename + "' not included by '" + ",".join(includesList) + "'")
 
             return False
 
           def excludesFilter(filename):
-            for excludeGlob in excludesList:
-              if PurePath(filename).match(excludeGlob):
-                print("excludes " + filename + ": " + ",".join(includesList) + " - true")
-                return False
+            if len(excludesList) == 0:
+              return True;
 
-            print("excludes " + filename + ": " + ",".join(includesList) + " - false")
+            print("checking whether '" + filename + "' excluded by '" + ",".join(excludesList) + "'")
+
+            for excludeGlob in excludesList:
+              print("checking: '" + filename + "' against '" + excludeGlob + "'")
+
+              if PurePath(filename).match(excludeGlob):
+                print("match found")
+                return False
+              else:
+                print("no match")
+
+            print("'" + filename + "' not excluded by '" + ",".join(excludesList) + "'")
 
             return True
 
