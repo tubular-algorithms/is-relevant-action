@@ -39,6 +39,8 @@ runs:
         import re
         import json
 
+        from pathlib import PurePath
+
         filenamesInput = "${{ inputs.filenames }}" or "${{ github.event.inputs.filenames }}"
         includesInput = '''${{ inputs.includes }}''' or '''${{ github.event.inputs.includes }}'''
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
@@ -49,28 +51,25 @@ runs:
           includesArr = ([], includesStr.splitlines())[len(includesStr) > 0]
           excludesArr = ([], excludesStr.splitlines())[len(excludesStr) > 0]
 
-          includesRegexArr = map(str.strip, includesArr)
-          excludesRegexArr = map(str.strip, excludesArr)
+          includesCleanArr = map(str.strip, includesArr)
+          excludesCleanArr = map(str.strip, excludesArr)
 
-          includesRegexArr = map(fnmatch.translate, includesArr)
-          excludesRegexArr = map(fnmatch.translate, excludesArr)
-
-          includesRegexList = list(includesRegexArr)
-          excludesRegexList = list(excludesRegexArr)
+          includesList = list(includesCleanArr)
+          excludesList = list(excludesCleanArr)
 
           def includesFilter(filename):
             if len(includesRegexList) == 0:
               return True;
 
-            for includeRegex in includesRegexList:
-              if re.match(r"^" + includeRegex + "$", filename):
+            for includeGlob in includesList:
+              if PurePath(filename).match(includeGlob):
                 return True
 
             return False
 
           def excludesFilter(filename):
-            for excludeRegex in excludesRegexList:
-              if re.match(r"^" + excludeRegex + "$", filename):
+            for excludeGlob in excludesList:
+              if PurePath(filename).match(excludeGlob):
                 return False
 
             return True
@@ -84,8 +83,8 @@ runs:
           resultsList = list(filenamesArr)
 
           print('filenamesInput: ' + filenamesInput)
-          print('includesRegexList: ' + ",".join(includesRegexList))
-          print('excludesRegexList: ' + ",".join(excludesRegexList))
+          print('includesList: ' + ",".join(includesList))
+          print('excludesList: ' + ",".join(excludesList))
 
           result = ('no', 'yes')[len(resultsList) > 0]
           resultListStr = ",".join(resultsList)
