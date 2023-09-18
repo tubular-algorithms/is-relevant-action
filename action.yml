@@ -134,7 +134,7 @@ runs:
           print('Config detected: ' + configInput)
 
           configArr = json.loads(configInput)
-          resultsList = []
+          resList = []
 
           for configItem in configArr:
             itemName = configItem['name']
