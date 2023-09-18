@@ -61,7 +61,7 @@ runs:
             if len(includesList) == 0:
               return True;
 
-            print(filename, "".join(includesList))
+            print("checking " + filename + " - " + ",".join(includesList))
 
             for includeGlob in includesList:
               print("checking: " + includeGlob)
