@@ -32,11 +32,11 @@ runs:
     - name: Validate relevant-files output
       shell: "bash"
       run: |
-        is_array=$(echo '${{ inputs.relevant-files-actual }}' | jq 'if type=="array" then "yes" else "no" end')
+        is_array=$(echo '${{ inputs.relevant-files-actual }}' | jq --raw-output 'if type=="array" then "yes" else "no" end')
 
         echo "result is array? $is_array"
 
-        if [ "$is_array" = "\"no\"" ]
+        if [ "$is_array" = "no" ]
         then
           actual_sorted=$(echo '${{ inputs.relevant-files-actual }}' | jq 'split(",") | sort_by(.) | join(",")')
           expected_sorted=$(echo '${{ inputs.relevant-files-expected }}' | jq 'split(",") | sort_by(.) | join(",")')
