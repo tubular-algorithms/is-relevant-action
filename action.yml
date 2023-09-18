@@ -65,6 +65,9 @@ runs:
           includesRegexList = list(includesRegexArr)
           excludesRegexList = list(excludesRegexArr)
 
+          print("includesRegexList", includesRegexList)
+          print("excludesRegexList", excludesRegexList)
+
           def includesFilter(filename):
             if len(includesRegexList) == 0:
               return True;
