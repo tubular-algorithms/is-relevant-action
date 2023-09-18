@@ -37,9 +37,9 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           includes: |
-            zzz/**
+            /zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
@@ -59,15 +59,15 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           excludes: |
-            zzz/**
+            **/zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
           relevant-expected: "yes"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-expected: "/aaa/bbb/ccc,/aaa/xxx.foo"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   multi-is-relevant:
@@ -106,7 +106,7 @@ jobs:
         with:
           relevant-expected: "yes,no,yes,no"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-expected: "/aaa/bbb/ccc,/aaa/xxx.foo"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
