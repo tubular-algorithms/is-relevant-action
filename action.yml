@@ -38,6 +38,7 @@ runs:
         import fnmatch
         import re
         import json
+        import pathspec
 
         from pathlib import PurePosixPath
 
@@ -85,7 +86,7 @@ runs:
             for excludeGlob in excludesList:
               print("checking: '" + filename + "' against '" + excludeGlob + "'")
 
-              if PurePurePosixPathPath(filename).match(excludeGlob):
+              if PurePosixPath(filename).match(excludeGlob):
                 print("match found")
                 return False
               else:
