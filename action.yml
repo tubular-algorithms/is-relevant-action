@@ -145,10 +145,8 @@ runs:
             print(itemName + ": result: '" + res + "' files: '" + resListStr + "'")
             resList += [res]
           
-          resultsListStr = ",".join(resultsList)
-
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'result={resultsListStr}', file=fh)
+            print(f'result={",".join(resList)}', file=fh)
         else:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
             print(f'result={result}', file=fh)
