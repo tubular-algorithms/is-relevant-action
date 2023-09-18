@@ -32,8 +32,8 @@ runs:
     - name: Validate relevant-files output
       shell: "bash"
       run: |
-        actual_sorted=$(echo '"${{ inputs.relevant-files-actual }}"' | jq 'split(",") | sort_by(.) | join(",")')
-        expected_sorted=$(echo '"${{ inputs.relevant-files-expected }}"' | jq 'split(",") | sort_by(.) | join(",")')
+        actual_sorted=$(echo '${{ inputs.relevant-files-actual }}' | jq 'split(",") | sort_by(.) | join(",")')
+        expected_sorted=$(echo '${{ inputs.relevant-files-expected }}' | jq 'split(",") | sort_by(.) | join(",")')
 
         if [ $actual_sorted != $expected_sorted ]
         then
