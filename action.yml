@@ -58,7 +58,7 @@ runs:
           excludesList = list(excludesCleanArr)
 
           def includesFilter(filename):
-            if len(includesRegexList) == 0:
+            if len(includesList) == 0:
               return True;
 
             for includeGlob in includesList:
