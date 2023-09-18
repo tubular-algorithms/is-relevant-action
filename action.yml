@@ -69,6 +69,8 @@ runs:
           print("excludesRegexList", excludesRegexList)
 
           def includesFilter(filename):
+            print("includesFilter", filename)
+
             if len(includesRegexList) == 0:
               return True;
 
