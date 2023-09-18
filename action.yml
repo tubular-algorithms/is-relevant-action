@@ -61,10 +61,10 @@ runs:
             if len(includesList) == 0:
               return True;
 
-            print("checking whether " + filename + " included in " + ",".join(includesList))
+            print("checking whether '" + filename + "' included in '" + ",".join(includesList) + "'")
 
             for includeGlob in includesList:
-              print("checking: " + filename + " against " + includeGlob)
+              print("checking: '" + filename + "' against '" + includeGlob + "'")
 
               if PurePath(filename).match(includeGlob):
                 print("match found")
@@ -72,7 +72,7 @@ runs:
               else:
                 print("no match")
 
-            print(filename + " not included in " + ",".join(includesList))
+            print("'" + filename + "' not included in '" + ",".join(includesList) + "'")
 
             return False
 
