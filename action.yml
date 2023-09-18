@@ -135,6 +135,8 @@ runs:
 
           configArr = json.loads(configInput)
           resList = []
+          relFilesLists = []
+
 
           for configItem in configArr:
             itemName = configItem['name']
@@ -144,15 +146,19 @@ runs:
             res, resListStr = isRelevant(resultListStr, itemIncludes, itemExcludes)
             print(itemName + ": result: '" + res + "' files: '" + resListStr + "'")
             resList += [res]
+            relFilesLists += [resListStr]
           
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'result={",".join(resList)}', file=fh)
+            print(f'result={json.dumps(resList)}', file=fh)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'relevant-files={json.dumps(relFilesLists)}', file=fh)
         else:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
             print(f'result={result}', file=fh)
 
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-          print(f'relevant-files={resultListStr}', file=fh)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'relevant-files={resultListStr}', file=fh)
 
         file = open(os.environ['GITHUB_OUTPUT'], "r");
 
