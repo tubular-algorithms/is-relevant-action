@@ -12,12 +12,12 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           includes: |
-            aaa/**
+            **/aaa/**
             **/*.foo
           excludes: |
-            zzz/**
+            /zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
