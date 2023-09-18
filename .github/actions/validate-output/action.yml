@@ -32,11 +32,18 @@ runs:
     - name: Validate relevant-files output
       shell: "bash"
       run: |
-        actual_sorted=$(echo '${{ inputs.relevant-files-actual }}' | jq 'split(",") | sort_by(.) | join(",")')
-        expected_sorted=$(echo '${{ inputs.relevant-files-expected }}' | jq 'split(",") | sort_by(.) | join(",")')
+        is_array=$(echo '${{ inputs.relevant-files-actual }}' | jq 'if type=="array" then "yes" else "no" end')
 
-        if [ $actual_sorted != $expected_sorted ]
+        if [ "$is_array" == "no" ]
         then
-          echo "::error::Not expected result, expected: ${expected_sorted}, actual ${actual_sorted}"
-          exit 1
+          actual_sorted=$(echo '${{ inputs.relevant-files-actual }}' | jq 'split(",") | sort_by(.) | join(",")')
+          expected_sorted=$(echo '${{ inputs.relevant-files-expected }}' | jq 'split(",") | sort_by(.) | join(",")')
+
+          if [ $actual_sorted != $expected_sorted ]
+          then
+            echo "::error::Not expected result, expected: ${expected_sorted}, actual ${actual_sorted}"
+            exit 1
+          fi
+        else
+          echo "we have an array"
         fi
