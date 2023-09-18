@@ -23,7 +23,7 @@ jobs:
         with:
           relevant-expected: "yes"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-expected: "/aaa/bbb/ccc,/aaa/xxx.foo"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   includes-is-relevant-yes:
@@ -45,7 +45,7 @@ jobs:
         with:
           relevant-expected: "yes"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "zzz/xxx.foo"
+          relevant-files-expected: "/zzz/xxx.foo"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   excludes-is-relevant-yes:
