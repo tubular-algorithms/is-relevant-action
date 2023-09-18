@@ -63,7 +63,7 @@ runs:
           includesRegexArr = map(fnmatch.translate, includesCleanArr)
           excludesRegexArr = map(fnmatch.translate, excludesCleanArr)
 
-          print("includes: ", includesRegexArr)
+          print("includes: ", list(includesRegexArr))
           print("excludes: ", excludesRegexArr)
 
           includesRegexList = list(includesRegexArr)
