@@ -55,19 +55,11 @@ runs:
           includesList = list(includesCleanArr)
           excludesList = list(excludesCleanArr)
 
-          
-
-          print("*---->" + ",".join(includesList));
-          print("*<----" + ",".join(excludesList));
-
           includesRegexArr = map(fnmatch.translate, includesList)
           excludesRegexArr = map(fnmatch.translate, excludesList)
 
           includesRegexList = list(includesRegexArr)
           excludesRegexList = list(excludesRegexArr)
-
-          print("---->" + ",".join(includesRegexList));
-          print("<----" + ",".join(excludesRegexList));
 
           def includesFilter(filename):
             if len(includesRegexList) == 0:
@@ -75,8 +67,8 @@ runs:
 
             print("checking whether '" + filename + "' included in '" + ",".join(includesList) + "'")
 
-            for includesRegex in includesRegexList:
-              print("checking: '" + filename + "' against '" + includesRegex + "'")
+            for includeRegex in includesRegexList:
+              print("checking: '" + filename + "' against '" + includeRegex + "'")
 
               if re.search(r"^" + includeRegex + "$", filename):
                 print("match found")
@@ -94,8 +86,8 @@ runs:
 
             print("checking whether '" + filename + "' excluded by '" + ",".join(excludesList) + "'")
 
-            for excludesRegex in excludesRegexList:
-              print("checking: '" + filename + "' against '" + excludesRegex + "'")
+            for excludeRegex in excludesRegexList:
+              print("checking: '" + filename + "' against '" + excludeRegex + "'")
 
               if re.search(r"^" + excludeRegex + "$", filename):
                 print("match found")
