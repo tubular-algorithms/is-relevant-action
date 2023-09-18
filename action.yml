@@ -60,11 +60,8 @@ runs:
           print("*---->" + ",".join(includesList));
           print("*<----" + ",".join(excludesList));
 
-          includesRegexArr = map(fnmatch.translate, includesCleanArr)
-          excludesRegexArr = map(fnmatch.translate, excludesCleanArr)
-
-          print("includes: ", list(includesRegexArr))
-          print("excludes: ", excludesRegexArr)
+          includesRegexArr = map(fnmatch.translate, includesList)
+          excludesRegexArr = map(fnmatch.translate, excludesList)
 
           includesRegexList = list(includesRegexArr)
           excludesRegexList = list(excludesRegexArr)
