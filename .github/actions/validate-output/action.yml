@@ -51,19 +51,24 @@ runs:
         }
 
         json_actual_str=$(echo '${{ inputs.relevant-files-actual }}')
-        json_expected_str=$(echo '${{ inputs.relevant-files-actual }}')
-        is_array=$(echo "$json_actual_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
+        json_expected_str=$(echo '${{ inputs.relevant-files-expected }}')
+        is_array=$(echo "$json_expected_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
 
-        echo "result is array? $is_array"
+        echo "Expected an array? $is_array"
 
         if [ "$is_array" = "no" ]
         then
           validate_file_list $json_actual_str $json_expected_str
         else
-          echo "we have an array"
+          echo "Checking arrays are comparable..."
 
           readarray -t actual_arr < <(echo "$json_actual_str" | jq -c '.[]')
           readarray -t expected_arr < <(echo "$json_expected_str" | jq -c '.[]')
+
+          if [ "${#actual_arr[@]}" -ne "${#expected_arr[@]}" ]; then
+            echo "::error::Expected ${#expected_arr[@]} items in array but found ${#actual_arr[@]}"
+            exit 1
+          fi
 
           for i in "${!expected_arr[@]}"; do
             printf "expected: %s, actual: %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
