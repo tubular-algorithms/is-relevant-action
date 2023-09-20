@@ -62,6 +62,6 @@ runs:
           expected_arr=$(echo "$json_expected_str" | jq -c '.[]')
 
           for i in "${!expected_arr[@]}"; do
-            printf "%s is in %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
+            printf "expected: %s, actual: %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
           done
         fi
