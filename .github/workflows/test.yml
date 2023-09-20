@@ -104,7 +104,7 @@ jobs:
         uses: ./
         with:
           filenames: "file.ts,file.tsx,file.js,file.jsx,tile.txt"
-          includes: "**/*.{t,j}s?(x)"
+          includes: "**/*.[t,j]s"
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
