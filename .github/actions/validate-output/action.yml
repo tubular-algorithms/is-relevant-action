@@ -44,7 +44,7 @@ runs:
             echo "::error::Not expected result, expected: ${expected_sorted}, actual ${actual_sorted}"
             exit 1
           else
-            echo "actual sorted: $actual_sorted
+            echo "actual sorted: $actual_sorted"
             echo "EQUALS"
             echo "expected sorted: $expected_sorted"
           fi
