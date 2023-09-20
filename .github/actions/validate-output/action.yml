@@ -22,8 +22,8 @@ runs:
     - name: Validate relevant output
       shell: "bash"
       run: |
-        json_actual_str="${{ inputs.relevant-actual }}"
-        json_expected_str="${{ inputs.relevant-expected }}"
+        json_actual_str='${{ inputs.relevant-actual }}'
+        json_expected_str='${{ inputs.relevant-expected }}'
 
         is_array=$(echo "$json_expected_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
 
