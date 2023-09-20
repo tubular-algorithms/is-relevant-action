@@ -128,7 +128,7 @@ jobs:
         with:
           relevant-expected: "[\"yes\", \"no\", \"yes\", \"no\"]"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "[\"/aaa/bbb/ccc,/aaa/xxx.foo\", \"\", \"/aaa/bbb/ccc\", \"\"]"
+          relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\"]"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
