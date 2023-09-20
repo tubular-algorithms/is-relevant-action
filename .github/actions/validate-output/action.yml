@@ -63,7 +63,7 @@ runs:
 
           for i in "${!expected_arr[@]}"; do
             printf "expected: %s, actual: %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
-            validate_file_list $expected_arr[i] $actual_arr[i]
+            validate_file_list "$expected_arr[i]" "$actual_arr[i]"
             echo "✓"
           done
         fi
