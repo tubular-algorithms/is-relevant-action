@@ -22,12 +22,41 @@ runs:
     - name: Validate relevant output
       shell: "bash"
       run: |
-        actual="${{ inputs.relevant-actual }}"
-        expected="${{ inputs.relevant-expected }}"
-        if [ $actual != $expected ]
+        json_actual_str="${{ inputs.relevant-actual }}"
+        json_expected_str="${{ inputs.relevant-expected }}"
+
+        is_array=$(echo "$json_expected_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
+
+        echo "Expected an array? $is_array"
+
+        if [ "$is_array" = "no" ]
         then
-          echo "::error::Not expected result, expected '${expected}', actual '${actual}'"
-          exit 1
+          if [ $json_actual_str != $json_expected_str ]
+          then
+            echo "::error::Not expected result, expected '${expected}', actual '${actual}'"
+            exit 1
+          fi
+        else
+          readarray -t actual_arr < <(echo "$json_actual_str" | jq -c '.[]')
+          readarray -t expected_arr < <(echo "$json_expected_str" | jq -c '.[]')
+
+          if [ "${#actual_arr[@]}" -ne "${#expected_arr[@]}" ]; then
+            echo "::error::Expected ${#expected_arr[@]} items in array but found ${#actual_arr[@]}"
+            exit 1
+          fi
+
+          for i in "${!expected_arr[@]}"; do
+            printf "expected: %s, actual: %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
+            validate_file_list "${expected_arr[i]}" "${actual_arr[i]}"
+
+            if [ "${actual_arr[i]}" != "${expected_arr[i]}" ]
+            then
+              echo "::error::Not expected result, expected '${expected_arr[i]}', actual '${actual_arr[i]}'"
+              exit 1
+            fi
+
+            echo "✓"
+          done
         fi
     - name: Validate relevant-files output
       shell: "bash"
