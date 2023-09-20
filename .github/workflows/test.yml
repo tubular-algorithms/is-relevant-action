@@ -87,7 +87,7 @@ jobs:
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "\"yes\""
+          relevant-expected: "\"yess\""
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
           relevant-files-expected: "\"/aaa/bbb/ccc,/aaa/xxx.foo\""
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
@@ -126,7 +126,7 @@ jobs:
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "[\"yes\",\"no\",\"yes\",\"no\"]"
+          relevant-expected: "[\"yes\",\"no\",\"yess\",\"no\"]"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
           relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\"]"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
