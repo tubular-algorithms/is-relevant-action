@@ -39,10 +39,14 @@ runs:
           actual_sorted=$(echo "$actual" | jq 'split(",") | sort_by(.) | join(",")')
           expected_sorted=$(echo "$expected" | jq 'split(",") | sort_by(.) | join(",")')
 
+          echo "actual sorted: $actual_sorted\nexpected sorted: $expected_sorted"
+
           if [ $actual_sorted != $expected_sorted ]
           then
             echo "::error::Not expected result, expected: ${expected_sorted}, actual ${actual_sorted}"
             exit 1
+          else
+            echo "actual sorted: $actual_sorted\nEQUALS\nexpected sorted: $expected_sorted"
           fi
         }
 
