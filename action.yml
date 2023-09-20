@@ -15,6 +15,11 @@ inputs:
     type: string
     required: false
     default: ""
+  config:
+    description: "A JSON config string which defines multiple relevance tests"
+    type: string
+    required: false
+    default: ""
 outputs:
   relevant:
     description: "yes/no string indicating whether step is relevant or not"
@@ -32,69 +37,128 @@ runs:
         import os
         import fnmatch
         import re
+        import json
 
         filenamesInput = "${{ inputs.filenames }}" or "${{ github.event.inputs.filenames }}"
         includesInput = '''${{ inputs.includes }}''' or '''${{ github.event.inputs.includes }}'''
         excludesInput = '''${{ inputs.excludes }}''' or '''${{ github.event.inputs.excludes }}'''
+        configInput = '''${{ inputs.config }}''' or '''${{ github.event.inputs.config }}'''
 
-        filenamesArr = ([], filenamesInput.split(","))[len(filenamesInput) > 0]
-        includesArr = ([], includesInput.splitlines())[len(includesInput) > 0]
-        excludesArr = ([], excludesInput.splitlines())[len(excludesInput) > 0]
+        def translateGlobToRegex(globPattern):
+          prefix = "^" if globPattern.startswith("/") else ""
+          return prefix + fnmatch.translate(globPattern) + "$"
 
-        includesRegexArr = map(str.strip, includesArr)
-        excludesRegexArr = map(str.strip, excludesArr)
+        def isRelevant(filenamesStr, includesStr, excludesStr):
+          filenamesArr = ([], filenamesStr.split(","))[len(filenamesStr) > 0]
+          includesArr = ([], includesStr.splitlines())[len(includesStr) > 0]
+          excludesArr = ([], excludesStr.splitlines())[len(excludesStr) > 0]
 
-        includesRegexArr = map(fnmatch.translate, includesArr)
-        excludesRegexArr = map(fnmatch.translate, excludesArr)
+          includesCleanArr = map(str.strip, includesArr)
+          excludesCleanArr = map(str.strip, excludesArr)
 
-        includesRegexList = list(includesRegexArr)
-        excludesRegexList = list(excludesRegexArr)
+          includesList = list(includesCleanArr)
+          excludesList = list(excludesCleanArr)
 
-        def includesFilter(filename):
-          if len(includesRegexList) == 0:
-            return True;
+          includesRegexArr = map(translateGlobToRegex, includesList)
+          excludesRegexArr = map(translateGlobToRegex, excludesList)
 
-          for includeRegex in includesRegexList:
-            if re.match(r"^" + includeRegex + "$", filename):
-              return True
+          includesRegexList = list(includesRegexArr)
+          excludesRegexList = list(excludesRegexArr)
 
-          return False
+          print("includesRegexList", includesRegexList)
+          print("excludesRegexList", excludesRegexList)
 
-        def excludesFilter(filename):
-          for excludeRegex in excludesRegexList:
-            if re.match(r"^" + excludeRegex + "$", filename):
-              return False
+          def includesFilter(filename):
+            print("includesFilter", filename)
 
-          return True
+            if len(includesRegexList) == 0:
+              return True;
 
-        # Throw away filenames that don't match one of the include patterns
-        filenamesArr = list(filter(includesFilter, filenamesArr))
+            print("checking whether '" + filename + "' included in '" + ",".join(includesList) + "'")
 
-        # Throw away filenames that match any exclude pattern
-        filenamesArr = filter(excludesFilter, filenamesArr)
+            for includeRegex in includesRegexList:
+              print("checking: '" + filename + "' against '" + includeRegex + "'")
 
-        resultsList = list(filenamesArr)
+              if re.search(r"" + includeRegex, filename):
+                print("match found")
+                return True
+              else:
+                print("no match")
 
-        print('filenamesInput')
-        print(filenamesInput)
+            print("'" + filename + "' not included by '" + ",".join(includesList) + "'")
 
-        print('includesRegexList')
-        print(includesRegexList)
+            return False
 
-        print('excludesRegexList')
-        print(excludesRegexList)
+          def excludesFilter(filename):
+            if len(excludesRegexList) == 0:
+              return True;
 
-        result = ('no', 'yes')[len(resultsList) > 0]
-        resultListStr = ",".join(resultsList)
+            print("checking whether '" + filename + "' excluded by '" + ",".join(excludesList) + "'")
 
-        print('Is relevant? ' + result)
-        print('Relevant files: ' + resultListStr)
+            for excludeRegex in excludesRegexList:
+              print("checking: '" + filename + "' against '" + excludeRegex + "'")
 
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-          print(f'result={result}', file=fh)
+              if re.search(r"" + excludeRegex, filename):
+                print("match found")
+                return False
+              else:
+                print("no match")
 
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-          print(f'relevant-files={resultListStr}', file=fh)
+            print("'" + filename + "' not excluded by '" + ",".join(excludesList) + "'")
+
+            return True
+
+          # Throw away filenames that don't match one of the include patterns
+          filenamesArr = list(filter(includesFilter, filenamesArr))
+
+          # Throw away filenames that match any exclude pattern
+          filenamesArr = filter(excludesFilter, filenamesArr)
+
+          resultsList = list(filenamesArr)
+
+          print('filenamesInput: ' + filenamesInput)
+          print('includesList: ' + ",".join(includesList))
+          print('excludesList: ' + ",".join(excludesList))
+
+          result = ('no', 'yes')[len(resultsList) > 0]
+          resultListStr = ",".join(resultsList)
+
+          print('Is relevant? ' + result)
+          print('Relevant files: ' + resultListStr)
+
+          return result, resultListStr
+
+        result, resultListStr = isRelevant(filenamesInput, includesInput, excludesInput)
+
+        if len(configInput) > 0:
+          print('Config detected: ' + configInput)
+
+          configArr = json.loads(configInput)
+          resList = []
+          relFilesLists = []
+
+
+          for configItem in configArr:
+            itemName = configItem['name']
+            itemIncludes = configItem.get('includes', "")
+            itemExcludes = configItem.get('excludes', "")
+            print(itemName + ": includes: '" + itemIncludes + "' excludes: '" + itemExcludes + "'")
+            res, resListStr = isRelevant(resultListStr, itemIncludes, itemExcludes)
+            print(itemName + ": result: '" + res + "' files: '" + resListStr + "'")
+            resList += [res]
+            relFilesLists += [resListStr]
+          
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'result={json.dumps(resList)}', file=fh)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'relevant-files={json.dumps(relFilesLists)}', file=fh)
+        else:
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'result={json.dumps(result)}', file=fh)
+
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+            print(f'relevant-files={json.dumps(resultListStr)}', file=fh)
 
         file = open(os.environ['GITHUB_OUTPUT'], "r");
 

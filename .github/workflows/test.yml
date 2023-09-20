@@ -12,18 +12,18 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           includes: |
             aaa/**
             **/*.foo
           excludes: |
-            zzz/**
+            /zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "yes"
+          relevant-expected: "\"yes\""
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-expected: "\"/aaa/bbb/ccc,/aaa/xxx.foo\""
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   includes-is-relevant-yes:
@@ -37,15 +37,37 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           includes: |
-            zzz/**
+            /zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "yes"
+          relevant-expected: "\"yes\""
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "zzz/xxx.foo"
+          relevant-files-expected: "\"/zzz/xxx.foo\""
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
+
+  includes-is-relevant-no:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: "${{ steps.is-relevant.outputs.relevant }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check relevance
+        id: is-relevant
+        uses: ./
+        with:
+          filenames: "/aaa/bbb/ccc"
+          includes: |
+            /bbb/**
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "\"no\""
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "\"\""
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   excludes-is-relevant-yes:
@@ -59,15 +81,54 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "aaa/bbb/ccc,aaa/xxx.foo,zzz/xxx.foo"
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           excludes: |
-            zzz/**
+            **/zzz/**
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "yes"
+          relevant-expected: "\"yes\""
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "aaa/bbb/ccc,aaa/xxx.foo"
+          relevant-files-expected: "\"/aaa/bbb/ccc,/aaa/xxx.foo\""
+          relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
+
+  multi-is-relevant:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: "${{ steps.is-relevant.outputs.relevant }}"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check relevance
+        id: is-relevant
+        uses: ./
+        with:
+          filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
+          config: |
+            [
+              {
+                "name": "A",
+                "includes": "/aaa/**"
+              },
+              {
+                "name": "B",
+                "includes": "/bbb/**"
+              },
+              {
+                "name": "C",
+                "includes": "/**/bbb/**"
+              },
+              {
+                "name": "D",
+                "includes": "/zzzz/**"
+              }
+            ]
+      - name: Validate is-relevant output
+        uses: ./.github/actions/validate-output
+        with:
+          relevant-expected: "[\"yes\",\"no\",\"yes\",\"no\"]"
+          relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
+          relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\"]"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
