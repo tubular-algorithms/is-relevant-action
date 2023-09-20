@@ -58,8 +58,8 @@ runs:
         else
           echo "we have an array"
 
-          actual_arr=${echo "$json_actual_str" | jq -c '.[]'}
-          expected_arr=${echo "$json_expected_str" | jq -c '.[]'}
+          actual_arr=$(echo "$json_actual_str" | jq -c '.[]')
+          expected_arr=$(echo "$json_expected_str" | jq -c '.[]')
 
           for i in "${!expected_arr[@]}"; do
             printf "%s is in %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
