@@ -126,28 +126,19 @@ jobs:
         with:
           filenames: "/aaa/bbb/ccc,/aaa/xxx.foo,/zzz/xxx.foo"
           config: |
-            [{
-              "name": "A",
-              "includes": "/aaa/**"
-            }, {
-              "name": "B",
-              "includes": "/bbb/**"
-            }, {
-              "name": "C",
-              "includes": "/**/bbb/**"
-            }, {
-              "name": "D",
-              "includes": "/zzzz/**"
-            }, {
-              "name": "F",
-              "includes": "/zzzz/**,**/*.foo"
-            }]
+            {
+              "A": { "includes": "/aaa/**" },
+              "B": { "includes": "/bbb/**" },
+              "C": { "includes": "/**/bbb/**"},
+              "D": { "includes": "/zzzz/**" },
+              "E": { "includes": "/zzzz/**,**/*.foo" }
+            }
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "[\"yes\",\"no\",\"yes\",\"no\",\"yes\"]"
+          relevant-expected: '{ "A": "yes", "B": "no", "C": "yes", "D": "no", "E": "yes" }'
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\", \"/aaa/xxx.foo,/zzz/xxx.foo\"]"
+          relevant-files-expected: "{ \"A\": \"/aaa/xxx.foo,/aaa/bbb/ccc\", \"B\": \"\", \"C\": \"/aaa/bbb/ccc\", \"D\": \"\", \"E\": \"/aaa/xxx.foo,/zzz/xxx.foo\"}"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:

@@ -137,26 +137,26 @@ runs:
         if len(configInput) > 0:
           print('Config detected: ' + configInput)
 
-          configArr = json.loads(configInput)
-          resList = []
-          relFilesLists = []
+          configObj = json.loads(configInput)
+          configKeys = configObj.keys()
+          resObj = []
+          relFilesObj = []
 
-
-          for configItem in configArr:
-            itemName = configItem['name']
+          for itemName in configKeys:
+            configItem = configObj[itemName]
             itemIncludes = configItem.get('includes', "")
             itemExcludes = configItem.get('excludes', "")
             print(itemName + ": includes: '" + itemIncludes + "' excludes: '" + itemExcludes + "'")
             res, resListStr = isRelevant(resultListStr, itemIncludes, itemExcludes)
             print(itemName + ": result: '" + res + "' files: '" + resListStr + "'")
-            resList += [res]
-            relFilesLists += [resListStr]
+            resObj[itemName] = res
+            relFilesObj[itemName] = resListStr
           
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'result={json.dumps(resList)}', file=fh)
+            print(f'result={json.dumps(resObj)}', file=fh)
 
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
-            print(f'relevant-files={json.dumps(relFilesLists)}', file=fh)
+            print(f'relevant-files={json.dumps(relFilesObj)}', file=fh)
         else:
           with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
             print(f'result={json.dumps(result)}', file=fh)
