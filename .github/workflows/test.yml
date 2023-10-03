@@ -138,13 +138,16 @@ jobs:
             }, {
               "name": "D",
               "includes": "/zzzz/**"
+            }, {
+              "name": "F",
+              "includes": "/zzzz/**,**/*.foo"
             }]
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
-          relevant-expected: "[\"yes\",\"no\",\"yes\",\"no\"]"
+          relevant-expected: "[\"yes\",\"no\",\"yes\",\"no\",\"yes\"]"
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\"]"
+          relevant-files-expected: "[\"/aaa/xxx.foo,/aaa/bbb/ccc\", \"\", \"/aaa/bbb/ccc\", \"\", \"/aaa/xxx.foo,/zzz/xxx.foo\"]"
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   output-is-relevant-results:
