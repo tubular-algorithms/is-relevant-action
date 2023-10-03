@@ -103,14 +103,14 @@ jobs:
         id: is-relevant
         uses: ./
         with:
-          filenames: "file.ts,file.tsx,file.js,file.jsx,tile.txt"
+          filenames: "/file.ts,/file.tsx,/file.js,/file.jsx,/tile.txt"
           includes: "**/*.[tj]s"
       - name: Validate is-relevant output
         uses: ./.github/actions/validate-output
         with:
           relevant-expected: "\"yes\""
           relevant-actual: ${{ steps.is-relevant.outputs.relevant }}
-          relevant-files-expected: "\"file.ts,file.tsx,file.js,file.jsx\""
+          relevant-files-expected: "\"/file.ts,/file.tsx,/file.js,/file.jsx\""
           relevant-files-actual: ${{ steps.is-relevant.outputs.relevant-files }}
 
   multi-is-relevant:
