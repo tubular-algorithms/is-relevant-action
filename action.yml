@@ -139,8 +139,8 @@ runs:
 
           configObj = json.loads(configInput)
           configKeys = configObj.keys()
-          resObj = []
-          relFilesObj = []
+          resObj = {}
+          relFilesObj = {}
 
           for itemName in configKeys:
             configItem = configObj[itemName]
