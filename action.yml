@@ -49,9 +49,9 @@ runs:
           return prefix + fnmatch.translate(globPattern) + "$"
 
         def isRelevant(filenamesStr, includesStr, excludesStr):
-          filenamesArr = ([], filenamesStr.split(","))[len(filenamesStr) > 0]
-          includesArr = ([], includesStr.splitlines())[len(includesStr) > 0]
-          excludesArr = ([], excludesStr.splitlines())[len(excludesStr) > 0]
+          filenamesArr = ([], re.split(';|,|\n', filenamesStr))[len(filenamesStr) > 0]
+          includesArr = ([], re.split(';|,|\n', includesStr))[len(includesStr) > 0]
+          excludesArr = ([], re.split(';|,|\n', excludesStr))[len(excludesStr) > 0]
 
           includesCleanArr = map(str.strip, includesArr)
           excludesCleanArr = map(str.strip, excludesArr)
