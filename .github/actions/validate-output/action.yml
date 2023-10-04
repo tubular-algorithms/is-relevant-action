@@ -25,11 +25,11 @@ runs:
         json_actual_str='${{ inputs.relevant-actual }}'
         json_expected_str='${{ inputs.relevant-expected }}'
 
-        is_array=$(echo "$json_expected_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
+        is_object=$(echo "$json_expected_str" | jq --raw-output 'if type=="object" then "yes" else "no" end')
 
-        echo "Expected an array? $is_array"
+        echo "Expected an object? $is_object"
 
-        if [ "$is_array" = "no" ]
+        if [ "$is_object" = "no" ]
         then
           if [ $json_actual_str != $json_expected_str ]
           then
@@ -37,20 +37,34 @@ runs:
             exit 1
           fi
         else
-          readarray -t actual_arr < <(echo "$json_actual_str" | jq -c '.[]')
-          readarray -t expected_arr < <(echo "$json_expected_str" | jq -c '.[]')
+          readarray -t actual_key_arr < <(echo "$json_actual_str" | jq -c '. | keys[]')
+          readarray -t expected_key_arr < <(echo "$json_expected_str" | jq -c '. | keys[]')
+          readarray -t actual_value_arr < <(echo "$json_actual_str" | jq -c '. | values[]')
+          readarray -t expected_value_arr < <(echo "$json_expected_str" | jq -c '. | values[]')
 
-          if [ "${#actual_arr[@]}" -ne "${#expected_arr[@]}" ]; then
-            echo "::error::Expected ${#expected_arr[@]} items in array but found ${#actual_arr[@]}"
+          if [ "${#actual_key_arr[@]}" -ne "${#expected_key_arr[@]}" ]; then
+            echo "::error::Expected ${#expected_key_arr[@]} items in keys array but found ${#actual_key_arr[@]}"
             exit 1
           fi
 
-          for i in "${!expected_arr[@]}"; do
-            printf "expected: %s, actual: %s\n" "${expected_arr[i]}" "${actual_arr[i]}"
+          for i in "${!expected_key_arr[@]}"; do
+            printf "expected: %s, actual: %s\n" "${expected_key_arr[i]}" "${actual_key_arr[i]}"
 
-            if [ "${actual_arr[i]}" != "${expected_arr[i]}" ]
+            if [ "${actual_key_arr[i]}" != "${expected_key_arr[i]}" ]
             then
-              echo "::error::Not expected result, expected '${expected_arr[i]}', actual '${actual_arr[i]}'"
+              echo "::error::Not expected result, expected '${expected_key_arr[i]}', actual '${actual_key_arr[i]}'"
+              exit 1
+            fi
+
+            echo "✓"
+          done
+
+          for i in "${!expected_value_arr[@]}"; do
+            printf "expected: %s, actual: %s\n" "${expected_value_arr[i]}" "${actual_value_arr[i]}"
+
+            if [ "${actual_value_arr[i]}" != "${expected_value_arr[i]}" ]
+            then
+              echo "::error::Not expected result, expected '${expected_value_arr[i]}', actual '${actual_value_arr[i]}'"
               exit 1
             fi
 
@@ -80,18 +94,18 @@ runs:
 
         json_actual_str=$(echo '${{ inputs.relevant-files-actual }}')
         json_expected_str=$(echo '${{ inputs.relevant-files-expected }}')
-        is_array=$(echo "$json_expected_str" | jq --raw-output 'if type=="array" then "yes" else "no" end')
+        is_object=$(echo "$json_expected_str" | jq --raw-output 'if type=="object" then "yes" else "no" end')
 
-        echo "Expected an array? $is_array"
+        echo "Expected an object? $is_object"
 
-        if [ "$is_array" = "no" ]
+        if [ "$is_object" = "no" ]
         then
           validate_file_list $json_actual_str $json_expected_str
         else
           echo "Checking arrays are comparable..."
 
-          readarray -t actual_arr < <(echo "$json_actual_str" | jq -c '.[]')
-          readarray -t expected_arr < <(echo "$json_expected_str" | jq -c '.[]')
+          readarray -t actual_arr < <(echo "$json_actual_str" | jq -c '. | values[]')
+          readarray -t expected_arr < <(echo "$json_expected_str" | jq -c '. | values[]')
 
           if [ "${#actual_arr[@]}" -ne "${#expected_arr[@]}" ]; then
             echo "::error::Expected ${#expected_arr[@]} items in array but found ${#actual_arr[@]}"
