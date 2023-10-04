@@ -39,6 +39,8 @@ runs:
         else
           readarray -t actual_key_arr < <(echo "$json_actual_str" | jq -c '. | keys[]')
           readarray -t expected_key_arr < <(echo "$json_expected_str" | jq -c '. | keys[]')
+          readarray -t actual_value_arr < <(echo "$json_actual_str" | jq -c '. | values[]')
+          readarray -t expected_value_arr < <(echo "$json_expected_str" | jq -c '. | values[]')
 
           if [ "${#actual_key_arr[@]}" -ne "${#expected_key_arr[@]}" ]; then
             echo "::error::Expected ${#expected_key_arr[@]} items in keys array but found ${#actual_key_arr[@]}"
@@ -51,6 +53,18 @@ runs:
             if [ "${actual_key_arr[i]}" != "${expected_key_arr[i]}" ]
             then
               echo "::error::Not expected result, expected '${expected_key_arr[i]}', actual '${actual_key_arr[i]}'"
+              exit 1
+            fi
+
+            echo "✓"
+          done
+
+          for i in "${!expected_value_arr[@]}"; do
+            printf "expected: %s, actual: %s\n" "${expected_value_arr[i]}" "${actual_value_arr[i]}"
+
+            if [ "${actual_value_arr[i]}" != "${expected_value_arr[i]}" ]
+            then
+              echo "::error::Not expected result, expected '${expected_value_arr[i]}', actual '${actual_value_arr[i]}'"
               exit 1
             fi
 
