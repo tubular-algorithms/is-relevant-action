@@ -165,7 +165,7 @@ jobs:
           echo 'Some checks have failed, exiting'
           exit 1
       - name: Output build pass message
-        run: echo 'Well done your build has passed with flying colours (English spelling mandatory)!'
+        run: echo 'Well done your build has passed with flying colours (British spelling mandatory)!'
 
 
 ```
